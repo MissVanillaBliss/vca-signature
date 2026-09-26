@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email Signature Generator</title>
+<style>
+  /* =========================================================
+     PAGE STYLES (only affect this page, not the signature)
+     ========================================================= */
+  :root {
+    --brand: #11499e;
+    --accent: #60d7d1;
+    --bg: #dcf1f4;
+    --card: #ffffff;
+    --text: #1c2430;
+    --muted: #5b6675;
+    --border: #d8dee6;
+    --focus: #11499e;
+    --ok: #1a7f4b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  header {
+    background: var(--brand);
+    border-bottom: 6px solid #fed521;
+    color: #fff;
+    padding: 28px 16px;
+  }
+  header .wrap { max-width: 960px; margin: 0 auto; }
+  header h1 { margin: 0 0 4px; font-size: 1.6rem; }
+  header p { margin: 0; opacity: .85; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  .grid { display: grid; gap: 20px; grid-template-columns: 1fr; }
+  @media (min-width: 820px) { .grid { grid-template-columns: 1fr 1.2fr; } }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card h2 { margin: 0 0 14px; font-size: 1.1rem; color: var(--brand); }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #fed521; color: var(--brand); font-size: .85rem; font-weight: 700;
+    margin-right: 8px;
+  }
+  label { display: block; font-weight: 600; font-size: .9rem; margin: 12px 0 4px; }
+  label .opt { font-weight: 400; color: var(--muted); }
+  input {
+    width: 100%; padding: 10px 12px; font-size: 1rem;
+    border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+  }
+  input:focus, button:focus-visible, summary:focus-visible, [role=tab]:focus-visible {
+    outline: 3px solid var(--focus); outline-offset: 2px;
+  }
+  .preview {
+    border: 1px dashed var(--border); border-radius: 8px;
+    padding: 16px; background: #fff; overflow-x: auto; min-height: 120px;
+  }
+  .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  button {
+    font: inherit; font-weight: 600; cursor: pointer;
+    padding: 10px 16px; border-radius: 8px; border: 2px solid var(--brand);
+  }
+  .primary { background: var(--brand); color: #fff; }
+  .primary:hover { background: #0d3a7f; }
+  .secondary { background: #fff; color: var(--brand); }
+  .secondary:hover { background: #eef3f8; }
+  .status { margin-top: 10px; min-height: 1.5em; color: var(--ok); font-weight: 600; }
+  .hint { color: var(--muted); font-size: .9rem; margin: 8px 0 0; }
+
+  /* Instructions */
+  .instructions { margin-top: 20px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  [role=tab] {
+    border: none; border-bottom: 3px solid transparent; border-radius: 0;
+    background: none; color: var(--muted); padding: 10px 12px;
+  }
+  [role=tab][aria-selected=true] { color: var(--brand); border-bottom-color: var(--accent); }
+  [role=tabpanel] ol { padding-left: 20px; margin: 0; }
+  [role=tabpanel] li { margin-bottom: 8px; }
+  .note {
+    background: #f3eaff; border-left: 4px solid #d6b4ff;
+    padding: 12px 14px; border-radius: 6px; margin-top: 16px; font-size: .95rem;
+  }
+  kbd {
+    background: #f0f2f5; border: 1px solid var(--border); border-bottom-width: 2px;
+    border-radius: 4px; padding: 1px 6px; font-size: .85em;
+  }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Email Signature Generator</h1>
+    <p>Fill in your details, copy your signature, and paste it into Outlook.</p>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- FORM -->
+    <section class="card" aria-labelledby="form-title">
+      <h2 id="form-title"><span class="step-num" aria-hidden="true">1</span>Your details</h2>
+      <form id="sigForm" onsubmit="return false;">
+        <label for="name">Full name</label>
+        <input id="name" autocomplete="name" placeholder="e.g. Kathleen Smith">
+
+        <label for="title">Job title</label>
+        <input id="title" autocomplete="organization-title" placeholder="e.g. Project Coordinator">
+
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" placeholder="e.g. name@vivaconagua.org">
+
+        <label for="phone">Phone <span class="opt">(optional)</span></label>
+        <input id="phone" type="tel" autocomplete="tel" placeholder="e.g. +27 21 000 0000">
+      </form>
+    </section>
+
+    <!-- PREVIEW + COPY -->
+    <section class="card" aria-labelledby="preview-title">
+      <h2 id="preview-title"><span class="step-num" aria-hidden="true">2</span>Preview and copy</h2>
+      <div class="preview" id="preview" aria-label="Signature preview"></div>
+
+      <div class="buttons">
+        <button type="button" class="primary" id="copySig">Copy signature</button>
+        <button type="button" class="secondary" id="copyCode">Copy HTML code</button>
+      </div>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+      <p class="hint">Use <strong>Copy signature</strong> for Outlook. "Copy HTML code" is only for IT or advanced setups.</p>
+    </section>
+  </div>
+
+  <!-- INSTRUCTIONS -->
+  <section class="card instructions" aria-labelledby="inst-title">
+    <h2 id="inst-title"><span class="step-num" aria-hidden="true">3</span>Add it to Outlook</h2>
+
+    <div class="tabs" role="tablist" aria-label="Outlook version">
+      <button role="tab" id="tab-new" aria-controls="panel-new" aria-selected="true">New Outlook &amp; Outlook on the web</button>
+      <button role="tab" id="tab-classic" aria-controls="panel-classic" aria-selected="false" tabindex="-1">Classic Outlook (Windows)</button>
+      <button role="tab" id="tab-mac" aria-controls="panel-mac" aria-selected="false" tabindex="-1">Outlook for Mac</button>
+    </div>
+
+    <div role="tabpanel" id="panel-new" aria-labelledby="tab-new">
+      <ol>
+        <li>Fill in your details above and click <strong>Copy signature</strong>.</li>
+        <li>In Outlook, click the <strong>Settings</strong> gear icon (top right).</li>
+        <li>Go to <strong>Account</strong> (or <strong>Mail</strong>) &rarr; <strong>Signatures</strong>.</li>
+        <li>Click <strong>+ New signature</strong> and give it a name, e.g. "Viva con Agua".</li>
+        <li>Click in the big signature box and paste with <kbd>Ctrl</kbd> + <kbd>V</kbd>.</li>
+        <li>Under <strong>Choose default signatures</strong>, pick it for new messages and replies.</li>
+        <li>Click <strong>Save</strong>.</li>
+      </ol>
+    </div>
+
+    <div role="tabpanel" id="panel-classic" aria-labelledby="tab-classic" hidden>
+      <ol>
+        <li>Fill in your details above and click <strong>Copy signature</strong>.</li>
+        <li>In Outlook, go to <strong>File</strong> &rarr; <strong>Options</strong> &rarr; <strong>Mail</strong> &rarr; <strong>Signatures…</strong></li>
+        <li>Click <strong>New</strong> and give it a name, e.g. "Viva con Agua".</li>
+        <li>Click in the edit box at the bottom and paste with <kbd>Ctrl</kbd> + <kbd>V</kbd>.</li>
+        <li>On the right, set it as the default for <strong>New messages</strong> and <strong>Replies/forwards</strong>.</li>
+        <li>Click <strong>OK</strong>.</li>
+      </ol>
+    </div>
+
+    <div role="tabpanel" id="panel-mac" aria-labelledby="tab-mac" hidden>
+      <ol>
+        <li>Fill in your details above and click <strong>Copy signature</strong>.</li>
+        <li>In Outlook, go to <strong>Outlook</strong> (top menu) &rarr; <strong>Settings</strong> &rarr; <strong>Signatures</strong>.</li>
+        <li>Click <strong>+</strong> to add a new signature and give it a name.</li>
+        <li>Delete any placeholder text and paste with <kbd>Cmd</kbd> + <kbd>V</kbd>.</li>
+        <li>Close the editor window to save, then set it as the default for new messages and replies.</li>
+      </ol>
+    </div>
+
+    <div class="note">
+      <strong>Logo showing as a blank box?</strong> That's normal in some inboxes. Outlook hides online images until the reader clicks "Download pictures". Your name and details are real text, so they always show.
+    </div>
+  </section>
+</main>
+
+<script>
+/* =========================================================
+   CONFIG – edit these values once, then share the page.
+   ========================================================= */
+const CONFIG = {
+  // Leave empty to use vca-logo.png sitting next to this page on GitHub Pages.
+  // Or paste a full link, e.g. "https://cdn.jsdelivr.net/gh/YOUR-USERNAME/vca-signature@main/vca-logo.png"
+  logoUrl: "",
+  logoFile: "vca-logo.png",
+  logoAlt: "Viva con Agua – All in for water",
+  logoWidth: 480,               // display width in px (export the PNG at 2x this = 960px wide)
+  logoHeight: 119,              // keeps the banner's proportions in classic Outlook
+
+  orgName: "Viva con Agua",
+  website: "https://www.vivaconagua.org",
+  websiteLabel: "vivaconagua.org",
+
+  // Brand colours – swap for the exact hex codes from the CI file if they differ
+  nameColor: "#11499e",         // Viva con Agua blue (from logo)
+  accentColor: "#60d7d1",       // turquoise (divider line only – too light for text)
+  linkColor: "#11499e",
+  textColor: "#333333"
+};
+
+/* ========================================================= */
+
+// Work out the full image link from wherever this page is hosted
+if (!CONFIG.logoUrl) CONFIG.logoUrl = new URL(CONFIG.logoFile, location.href).href;
+
+const $ = id => document.getElementById(id);
+const fields = ["name", "title", "email", "phone"];
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+  ));
+}
+
+function buildSignature() {
+  const name  = $("name").value.trim()  || "Your Name";
+  const title = $("title").value.trim() || "Your Job Title";
+  const email = $("email").value.trim() || "name@example.org";
+  const phone = $("phone").value.trim();
+  const telHref = phone.replace(/[^\d+]/g, "");
+  const c = CONFIG;
+  const font = "font-family:Arial,Helvetica,sans-serif;";
+
+  // Table-based layout with inline styles so Outlook renders it correctly
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" width="${c.logoWidth}" style="border-collapse:collapse;${font}">
+  <tr>
+    <td valign="top" style="padding:0 0 0 12px;border-left:3px solid ${c.accentColor};">
+      <p style="margin:0;${font}font-size:16px;line-height:20px;font-weight:bold;color:${c.nameColor};">${esc(name)}</p>
+      <p style="margin:0 0 8px 0;${font}font-size:13px;line-height:18px;color:${c.textColor};">${esc(title)} | ${esc(c.orgName)}</p>
+      <p style="margin:0;${font}font-size:13px;line-height:18px;color:${c.textColor};">
+        <a href="mailto:${esc(email)}" style="color:${c.textColor};text-decoration:none;">${esc(email)}</a>
+      </p>${phone ? `
+      <p style="margin:0;${font}font-size:13px;line-height:18px;color:${c.textColor};">
+        <a href="tel:${esc(telHref)}" style="color:${c.textColor};text-decoration:none;">${esc(phone)}</a>
+      </p>` : ""}
+      <p style="margin:0;${font}font-size:13px;line-height:18px;">
+        <a href="${esc(c.website)}" style="color:${c.linkColor};text-decoration:none;font-weight:bold;">${esc(c.websiteLabel)}</a>
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:12px 0 0 0;">
+      <a href="${esc(c.website)}" style="text-decoration:none;">
+        <img src="${esc(c.logoUrl)}" alt="${esc(c.logoAlt)}" width="${c.logoWidth}" height="${c.logoHeight}" style="display:block;width:${c.logoWidth}px;max-width:100%;height:auto;border:0;">
+      </a>
+    </td>
+  </tr>
+</table>`;
+}
+
+function render() { $("preview").innerHTML = buildSignature(); }
+fields.forEach(f => $(f).addEventListener("input", render));
+render();
+
+function setStatus(msg) {
+  $("status").textContent = msg;
+  clearTimeout(setStatus.t);
+  setStatus.t = setTimeout(() => $("status").textContent = "", 4000);
+}
+
+// Copy as formatted signature (what Outlook needs)
+$("copySig").addEventListener("click", async () => {
+  const html = buildSignature();
+  const plain = $("preview").innerText;
+  try {
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        "text/html": new Blob([html], { type: "text/html" }),
+        "text/plain": new Blob([plain], { type: "text/plain" })
+      })
+    ]);
+    setStatus("Signature copied! Now paste it into Outlook.");
+  } catch (e) {
+    // Fallback for older browsers: select the preview and copy it
+    const range = document.createRange();
+    range.selectNodeContents($("preview"));
+    const sel = window.getSelection();
+    sel.removeAllRanges(); sel.addRange(range);
+    const ok = document.execCommand("copy");
+    sel.removeAllRanges();
+    setStatus(ok ? "Signature copied! Now paste it into Outlook."
+                 : "Couldn't copy automatically. Select the preview, then press Ctrl+C.");
+  }
+});
+
+// Copy raw HTML code
+$("copyCode").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(buildSignature());
+    setStatus("HTML code copied.");
+  } catch (e) {
+    setStatus("Couldn't copy the code in this browser.");
+  }
+});
+
+// Accessible tabs
+const tabs = Array.from(document.querySelectorAll("[role=tab]"));
+function selectTab(tab) {
+  tabs.forEach(t => {
+    const on = t === tab;
+    t.setAttribute("aria-selected", on);
+    t.tabIndex = on ? 0 : -1;
+    $(t.getAttribute("aria-controls")).hidden = !on;
+  });
+  tab.focus();
+}
+tabs.forEach((tab, i) => {
+  tab.addEventListener("click", () => selectTab(tab));
+  tab.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") selectTab(tabs[(i + 1) % tabs.length]);
+    if (e.key === "ArrowLeft")  selectTab(tabs[(i - 1 + tabs.length) % tabs.length]);
+  });
+});
+</script>
+</body>
+</html>
