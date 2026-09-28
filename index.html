@@ -260,8 +260,8 @@ const CONFIG = {
   bannerWidth: 480,             // display width in px (export the PNGs at 2x = 960px wide)
 
   orgName: "Viva con Agua",
-  website: "https://www.vivaconagua.org",
-  websiteLabel: "vivaconagua.org",
+  website: "https://vivaconagua.org.za",
+  websiteLabel: "vivaconagua.org.za",
 
   // Brand colours
   nameColor: "#11499e",         // Viva con Agua blue (from logo)
@@ -335,7 +335,7 @@ function buildSignature() {
   <tr>
     <td valign="top" style="padding:0 0 0 12px;border-left:3px solid ${c.accentColor};">
       <p style="margin:0;${font}font-size:16px;line-height:20px;font-weight:bold;color:${c.nameColor};">${esc(name)}</p>
-      <p style="margin:0 0 8px 0;${font}font-size:13px;line-height:18px;color:${c.textColor};">${esc(title)} | ${esc(c.orgName)}</p>
+      <p style="margin:0 0 8px 0;${font}font-size:13px;line-height:18px;color:${c.textColor};">${esc(title)} | <span style="color:${c.nameColor};font-weight:bold;">${esc(c.orgName)}</span></p>
       <p style="margin:0;${font}font-size:13px;line-height:18px;color:${c.textColor};">
         <a href="mailto:${esc(email)}" style="color:${c.textColor};text-decoration:none;">${esc(email)}</a>
       </p>${phone ? `
